@@ -131,7 +131,8 @@ window.addEventListener('load', function() {
     });
     observer.observe(mainContent, { childList: true, subtree: true });
   }
-});</script><tw-tag name="开始" color="none"></tw-tag><tw-tag name="猎户剧情" color="yellow"></tw-tag><tw-tag name="药师剧情" color="green"></tw-tag><tw-passagedata pid="1" name="山洞" tags="" position="625,375" size="100,100">&lt;img src=&quot;img/山洞.png&quot; width=&quot;640px&quot;&gt;
+});
+</script><tw-tag name="开始" color="none"></tw-tag><tw-tag name="猎户剧情" color="yellow"></tw-tag><tw-tag name="药师剧情" color="green"></tw-tag><tw-passagedata pid="1" name="山洞" tags="" position="625,375" size="100,100">&lt;img src=&quot;img/山洞.png&quot; width=&quot;640px&quot;&gt;
 [(set: $location to &quot;山洞&quot;)]
 -今天是你修行的第 $day 天
 -当前时段： $period
@@ -439,7 +440,7 @@ $successRate：当前修炼成功率（动态计算）--&gt;</tw-passagedata><tw
 (elseif: $period is &quot;下午&quot;)[&lt;img src=&quot;img/森林日.png&quot; width=&quot;640px&quot;&gt;
 烈日被茂密的树冠切割成细碎的光斑，林中闷热而安静，只闻蝉鸣声声。
 ]
-(elseif: $period is &quot;晚上&quot;)[
+(elseif: $period is &quot;晚上&quot;)[&lt;img src=&quot;img/森林夜.jpg&quot; width=&quot;640px&quot;&gt;
 月光难以穿透层层树影，森林漆黑一片。四周的黑暗里，仿佛有无数双眼睛在窥视，危机四伏。
 ]
 
@@ -494,7 +495,7 @@ $successRate：当前修炼成功率（动态计算）--&gt;</tw-passagedata><tw
 (elseif: $period is &quot;下午&quot;)[&lt;img src=&quot;img/瀑布日.png&quot; width=&quot;640px&quot;&gt;
 &lt;br&gt;水声隆隆，带来阵阵清凉。你坐在潭边，感受着扑面而来的湿润水汽，精神为之一振。
 ]
-(elseif: $period is &quot;晚上&quot;)[
+(elseif: $period is &quot;晚上&quot;)[&lt;img src=&quot;img/瀑布夜.jpg&quot; width=&quot;640px&quot;&gt;
 &lt;br&gt;月色下的瀑布宛如一匹银练，轰隆声在寂静的山谷中传得更远，显得神秘而幽深。
 ]
 
@@ -3385,6 +3386,7 @@ $food：食物数量（烹饪产物）--&gt;</tw-passagedata><tw-passagedata pid
       &lt;li&gt;武功:$martialLevel|烹饪:$cookLevel&lt;/li&gt;
       &lt;li&gt;制药:$medicineLevel|文书:$documentLevel&lt;/li&gt;
       &lt;li&gt;生肉:$rawMeat|蔬菜:$vegetable&lt;/li&gt;
+      &lt;li&gt;[[导入/导出存档]]&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/div&gt;
 
@@ -21763,7 +21765,254 @@ tw-passage {
 ]
 
 
-    (display: &quot;全局侧边栏&quot;)  </tw-passagedata></tw-storydata>
+    (display: &quot;全局侧边栏&quot;)  </tw-passagedata><tw-passagedata pid="302" name="导入/导出存档" tags="" position="750,3575" size="100,100">&lt;div class=&quot;save-string-tool&quot; style=&quot;max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #444; background: #222; color: #eee; font-family: sans-serif;&quot;&gt;
+  &lt;h2 style=&quot;color: #fff; border-bottom: 1px solid #555; padding-bottom: 10px;&quot;&gt;📋 存档字符串交换&lt;/h2&gt;
+  &lt;p style=&quot;font-size: 0.9em; color: #aaa;&quot;&gt;⚠️ 重要提醒：
+你的存档保存在浏览器本地，
+清除缓存 / 换设备 / 重装浏览器都会丢失存档！
+请务必先导出存档并保存好，再进行清理。&lt;/p&gt;
+
+  &lt;!-- 选择槽位 --&gt;
+  &lt;div style=&quot;margin-bottom: 20px;&quot;&gt;
+    &lt;label style=&quot;display:block; margin-bottom: 5px; font-weight: bold;&quot;&gt;选择操作的存档槽位：&lt;/label&gt;
+    &lt;select id=&quot;slotSelector&quot; style=&quot;width: 100%; padding: 8px; background: #333; color: #fff; border: 1px solid #555; font-family: monospace; font-size: 11px;&quot;&gt;
+      &lt;option value=&quot;&quot; disabled selected&gt;-- 正在扫描本地存储... --&lt;/option&gt;
+    &lt;/select&gt;
+    &lt;small id=&quot;slotStatus&quot; style=&quot;color: #888; display: block; margin-top: 5px;&quot;&gt;&lt;/small&gt;
+  &lt;/div&gt;
+
+  &lt;hr style=&quot;border-color: #444;&quot;&gt;
+
+  &lt;!-- 导出 --&gt;
+  &lt;div style=&quot;margin-bottom: 25px; background: #2a2a2a; padding: 15px; border-radius: 5px;&quot;&gt;
+    &lt;h3 style=&quot;margin-top: 0; color: #4CAF50;&quot;&gt;📤 导出 (复制字符串)&lt;/h3&gt;
+    &lt;button onclick=&quot;handleExport()&quot; style=&quot;width: 100%; padding: 10px; background: #4CAF50; color: white; border: none; cursor: pointer; font-weight: bold; border-radius: 4px;&quot;&gt;
+      复制选中存档的字符串
+    &lt;/button&gt;
+  &lt;/div&gt;
+
+  &lt;!-- 导入 --&gt;
+  &lt;div style=&quot;background: #2a2a2a; padding: 15px; border-radius: 5px;&quot;&gt;
+    &lt;h3 style=&quot;margin-top: 0; color: #2196F3;&quot;&gt;📥 导入 (粘贴字符串)&lt;/h3&gt;
+    &lt;textarea id=&quot;saveInput&quot; rows=&quot;4&quot; placeholder=&quot;在此处粘贴存档字符串...&quot; style=&quot;width: 100%; background: #111; color: #0f0; border: 1px solid #444; padding: 8px; font-family: monospace; font-size: 12px; box-sizing: border-box;&quot;&gt;&lt;/textarea&gt;
+    
+    &lt;div style=&quot;margin-top: 10px; display: flex; gap: 10px; align-items: center;&quot;&gt;
+      &lt;button onclick=&quot;handlePasteImport()&quot; style=&quot;flex: 1; padding: 8px; background: #2196F3; color: white; border: none; cursor: pointer; border-radius: 4px;&quot;&gt;
+        确认导入
+      &lt;/button&gt;
+      &lt;input type=&quot;file&quot; id=&quot;fileInput&quot; accept=&quot;.txt,.json&quot; style=&quot;flex: 1; font-size: 12px; color: #aaa;&quot; onchange=&quot;handleFileImport()&quot; /&gt;
+    &lt;/div&gt;
+    &lt;p style=&quot;font-size: 0.75em; color: #f44336; margin-top: 10px;&quot;&gt;⚠️ 导入将覆盖所选槽位！&lt;/p&gt;
+  &lt;/div&gt;
+
+  &lt;hr style=&quot;border-color: #444; margin-top: 25px;&quot;&gt;
+  &lt;div style=&quot;text-align: center;&quot;&gt;
+    (link: &quot;返回游戏&quot;)[ (goto: $location) ]
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+(function() {
+  // --- 核心逻辑函数 (定义在局部作用域，确保立即可用) ---
+
+  // 1. 获取所有存档键 (基于长度判断，兼容 UUID 键名)
+  function getSaveKeys() {
+    let keys = [];
+    try {
+      for (let i = 0; i &lt; localStorage.length; i++) {
+        let key = localStorage.key(i);
+        let value = localStorage.getItem(key);
+        // 只要值存在且长度大于 100 (排除短配置项)，就视为存档
+        if (value &amp;&amp; value.length &gt; 100) {
+          keys.push(key);
+        }
+      }
+    } catch (e) {
+      console.error(&quot;读取 LocalStorage 失败:&quot;, e);
+    }
+    return keys;
+  }
+
+  // 2. 导出功能
+  window.handleExport = function() {
+    const selector = document.getElementById(&#39;slotSelector&#39;);
+    const slotKey = selector ? selector.value : null;
+    
+    if (!slotKey || slotKey === &quot;&quot;) {
+      alert(&quot;请先选择一个已存在的存档槽位！&quot;);
+      return;
+    }
+    
+    const saveData = localStorage.getItem(slotKey);
+    if (!saveData) {
+      alert(&quot;错误：无法读取该槽位数据。&quot;);
+      return;
+    }
+
+    // 提取显示名
+    let displayName = slotKey;
+    if (slotKey.includes(&#39;slot&#39;)) {
+      const parts = slotKey.split(&#39;slot&#39;);
+      displayName = &quot;slot&quot; + parts[parts.length - 1];
+    }
+
+    // 尝试复制到剪贴板
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(saveData).then(() =&gt; {
+        alert(`✅ 存档 &quot;${displayName}&quot; 已复制到剪贴板！\n长度：${saveData.length} 字符。\n可以直接粘贴发送。`);
+      }).catch(() =&gt; {
+        fallbackDownload(saveData, displayName);
+      });
+    } else {
+      fallbackDownload(saveData, displayName);
+    }
+  };
+
+  function fallbackDownload(data, name) {
+    const blob = new Blob([data], {type: &quot;text/plain&quot;});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement(&#39;a&#39;);
+    a.href = url;
+    a.download = `save_${name.replace(/[^a-z0-9]/gi, &#39;_&#39;)}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    alert(`⚠️ 自动复制失败，已自动下载文件 &quot;save_${name}.txt&quot;。\n文件内容即为存档字符串。`);
+  }
+
+  // 3. 导入功能 (从文本框)
+  window.handlePasteImport = function() {
+    const selector = document.getElementById(&#39;slotSelector&#39;);
+    const slotKey = selector ? selector.value : null;
+    const text = document.getElementById(&#39;saveInput&#39;).value;
+    
+    if (!slotKey || slotKey === &quot;&quot;) {
+      alert(&quot;请选择一个目标槽位！&quot;);
+      return;
+    }
+    if (!text || text.trim() === &quot;&quot;) {
+      alert(&quot;文本框为空，请输入存档字符串！&quot;);
+      return;
+    }
+
+    try {
+      localStorage.setItem(slotKey, text.trim());
+      alert(`✅ 成功导入存档到 &quot;${slotKey.includes(&#39;slot&#39;) ? &#39;slot&#39;+slotKey.split(&#39;slot&#39;).pop() : slotKey}&quot;！\n页面将刷新以加载新进度。`);
+      location.reload();
+    } catch (e) {
+      alert(&quot;导入失败：数据写入错误。&quot;);
+      console.error(e);
+    }
+  };
+
+  // 4. 导入功能 (从文件)
+  window.handleFileImport = function() {
+    const selector = document.getElementById(&#39;slotSelector&#39;);
+    const slotKey = selector ? selector.value : null;
+    const fileInput = document.getElementById(&#39;fileInput&#39;);
+    
+    if (!slotKey || slotKey === &quot;&quot;) {
+      alert(&quot;请选择一个目标槽位！&quot;);
+      return;
+    }
+    if (!fileInput.files || !fileInput.files[0]) {
+      return;
+    }
+
+    const file = fileInput.files[0];
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      window.handlePasteImport(); // 复用粘贴逻辑，但需要手动传参，这里简单重写一下逻辑
+      // 重新实现一次以防混淆
+      const content = e.target.result;
+      if (!content || content.trim() === &quot;&quot;) {
+        alert(&quot;文件内容为空！&quot;);
+        return;
+      }
+      try {
+        localStorage.setItem(slotKey, content.trim());
+        alert(`✅ 文件导入成功！页面将刷新。`);
+        location.reload();
+      } catch (err) {
+        alert(&quot;文件导入失败。&quot;);
+      }
+    };
+    reader.readAsText(file);
+    fileInput.value = &#39;&#39;; // 重置
+  };
+
+  // --- 初始化界面 ---
+  function initUI() {
+    const selector = document.getElementById(&#39;slotSelector&#39;);
+    const status = document.getElementById(&#39;slotStatus&#39;);
+    
+    if (!selector) {
+      // 如果 DOM 还没好，稍后重试
+      setTimeout(initUI, 100);
+      return;
+    }
+
+    // 清空并添加默认选项
+    selector.innerHTML = &#39;&lt;option value=&quot;&quot; disabled selected&gt;-- 选择槽位 --&lt;/option&gt;&#39;;
+    
+    const keys = getSaveKeys();
+    console.log(&quot;🔍 扫描到的存档键:&quot;, keys);
+
+    if (keys.length === 0) {
+      status.textContent = &quot;⚠️ 未发现任何存档数据。请确认游戏中已保存。&quot;;
+      status.style.color = &quot;#f44336&quot;;
+      
+      // 即使没发现，也提供几个标准槽位供“新建/导入”使用
+      const defaults = [&quot;story-save-slot1&quot;, &quot;story-save-slot2&quot;, &quot;story-save-slot3&quot;];
+      defaults.forEach(k =&gt; {
+        const opt = document.createElement(&#39;option&#39;);
+        opt.value = k;
+        opt.text = k.replace(&#39;story-save-&#39;, &#39;&#39;) + &quot; (新建/导入用)&quot;;
+        selector.appendChild(opt);
+      });
+    } else {
+      status.textContent = `✅ 发现 ${keys.length} 个存档。`;
+      status.style.color = &quot;#4CAF50&quot;;
+      
+      keys.forEach(key =&gt; {
+        const opt = document.createElement(&#39;option&#39;);
+        opt.value = key;
+        
+        // 美化显示名称
+        let displayText = key;
+        if (key.length &gt; 40) {
+            const slotMatch = key.match(/slot\d+/i);
+            if (slotMatch) {
+                displayText = &quot;... &quot; + slotMatch[0] + &quot; (特殊键名)&quot;;
+            } else {
+                displayText = key.substring(0, 15) + &quot;...&quot; + key.substring(key.length - 10);
+            }
+        }
+        opt.text = displayText;
+        opt.title = key; // 鼠标悬停显示全名
+        selector.appendChild(opt);
+      });
+      
+      // 自动选中第一个（可选）
+      // selector.selectedIndex = 1; 
+    }
+  }
+
+  // 启动初始化
+  // 使用 requestAnimationFrame 确保 DOM 渲染完成
+  requestAnimationFrame(function() {
+    setTimeout(initUI, 50);
+  });
+
+})();
+&lt;/script&gt;
+
+&lt;style&gt;
+  .save-string-tool select:focus, .save-string-tool textarea:focus { outline: 2px solid #2196F3; }
+  button:hover { opacity: 0.9; transform: translateY(-1px); transition: all 0.2s; }
+  button:active { transform: translateY(0); }
+&lt;/style&gt;</tw-passagedata></tw-storydata>
 <script title="Twine engine code" data-main="harlowe">(function(){"use strict";
 var require,define;!function(){var e={},r={};require=function(i){var n=e[i];return n&&(r[i]=n[1].apply(void 0,n[0].map(require)),e[i]=void 0),r[i]},(define=function(r,i,n){if("function"==typeof r)return r();e[r]=[i,n]}).amd=!0}();/*!
  * https://github.com/paulmillr/es6-shim
