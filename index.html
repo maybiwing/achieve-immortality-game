@@ -1042,7 +1042,7 @@ $food：食物数量（烹饪产物）--&gt;</tw-passagedata><tw-passagedata pid
     ]
   ]
 ]
-(display: &quot;全局侧边栏&quot;)  </tw-passagedata><tw-passagedata pid="11" name="森林狩猎" tags="" position="925,825" size="100,100">:: 森林
+(display: &quot;全局侧边栏&quot;)  </tw-passagedata><tw-passagedata pid="11" name="森林狩猎" tags="" position="925,825" size="100,100">  :: 森林
 # 狩猎
 (if: $period is &quot;上午&quot;)[
 你隐于灌木之后，屏息凝神，仔细观察着地上的足迹与空中的气味，等待猎物进入你的狩猎范围。  
@@ -1073,37 +1073,36 @@ $food：食物数量（烹饪产物）--&gt;</tw-passagedata><tw-passagedata pid
   (if: _successRate &lt; 10)[(set: _successRate to 10)]
   (if: _successRate &gt; 100)[(set: _successRate to 100)]
 
-&lt;!-- 步骤3：判定打猎成功/失败 --&gt;
-(set: _huntRand to (random: 1, 100))
-(if: _huntRand &lt;= _successRate)[  &lt;!-- 打猎成功 --&gt;
-  (if: $martialLevel is 1)[(set: _meatCount to 3)]
-  (elseif: $martialLevel is 2)[(set: _meatCount to 6)]
-  (elseif: $martialLevel is 3)[(set: _meatCount to 12)]
-  (elseif: $martialLevel is 4)[(set: _meatCount to 24)]
-  (elseif: $martialLevel is 5)[(set: _meatCount to 48)]
-  (elseif: $martialLevel is 6)[(set: _meatCount to 96)]
-  (else:)[(set: _meatCount to 120 + _huntRand)]
-
-  &lt;!-- 计算皮毛数量：生肉 / 3 --&gt;
-  (set: _furCount to (_meatCount / 3))
+  &lt;!-- 步骤3：判定打猎成功/失败 --&gt;
+  (set: _huntRand to (random: 1, 100))
+  (if: _huntRand &lt;= _successRate)[  &lt;!-- 打猎成功 --&gt;
+    (if: $martialLevel is 1)[(set: _meatCount to 3)]
+    (elseif: $martialLevel is 2)[(set: _meatCount to 6)]
+    (elseif: $martialLevel is 3)[(set: _meatCount to 12)]
+    (elseif: $martialLevel is 4)[(set: _meatCount to 24)]
+    (elseif: $martialLevel is 5)[(set: _meatCount to 48)]
+    (elseif: $martialLevel is 6)[(set: _meatCount to 96)]
+    (else:)[(set: _meatCount to 120 + _huntRand)]
 
   &lt;!-- 随机掉落：野猪皮 或 野兔皮 --&gt;
   (set: _furType to (random: 1, 2))
   (if: _furType is 1)[
-    (set: $boarFur to $boarFur + _furCount)  &lt;!-- 加野猪皮 --&gt;
+    (set: $boarFur to $boarFur + 1)  &lt;!-- 加野猪皮 --&gt;
     (set: _furName to &quot;野猪皮&quot;)
   ]
-  (else)[
-    (set: $hareFur to $hareFur + _furCount)   &lt;!-- 加野兔皮 --&gt;
+  (else:)[
+    (set: $hareFur to $hareFur + 2)   &lt;!-- 加野兔皮 --&gt;
     (set: _furName to &quot;野兔皮&quot;)
   ]
 
-  打猎成功！凭借 $martialLevel 级武功捕获猎物，获得 _meatCount 份生肉 &amp; _furCount 张_furName！
-  (set: $rawMeat to $rawMeat + _meatCount)
-]
+    打猎成功！凭借 $martialLevel 级武功捕获猎物，获得 _meatCount 份生肉和 _furName！
+    (set: $rawMeat to $rawMeat + _meatCount)
+  
+
 &lt;!-- 弱肉强食事件（武功等级&gt;5，打猎成功后30%概率触发） --&gt;
 (if: $martialLevel &gt; 5)[
-    (set: $robChance to (random: 1, 100)) &lt;!-- 先赋值，再判断 --&gt;
+   
+   (set: $robChance to (random: 1, 100)) &lt;!-- 先赋值，再判断 --&gt;
     &lt;!-- 10%概率触发猎户抢猎 --&gt;
     (if: $robChance &lt;= 10 and $hasMetHunter is true and $weather is &quot;晴天&quot;)[
       (goto: &quot;猎户抢猎&quot;)
@@ -1156,7 +1155,7 @@ $food：食物数量（烹饪产物）--&gt;</tw-passagedata><tw-passagedata pid
     
     &lt;!-- 风险分支3：中毒 --&gt;
     (elseif: _riskRand &lt;= 10)[
-      被毒蜘蛛袭击，中了毒！（每日健康-2，持续3天）
+      被带毒的猎物袭击，中了毒！（每日健康-2，持续3天）
       (set: $poisonType to &quot;hunt&quot;)
       (set: $poisonDays to 3)
     ]
@@ -1181,7 +1180,13 @@ $food：食物数量（烹饪产物）--&gt;</tw-passagedata><tw-passagedata pid
 &lt;!-- 场景定位 --&gt;
 (set: $location to &quot;森林&quot;)
 (display: &quot;全局侧边栏&quot;)
-(display: &quot;时间更新&quot;)</tw-passagedata><tw-passagedata pid="12" name="森林采集" tags="" position="925,700" size="100,100">:: 森林
+(display: &quot;时间更新&quot;)
+  
+
+  
+  
+  
+  </tw-passagedata><tw-passagedata pid="12" name="森林采集" tags="" position="925,700" size="100,100">:: 森林
 # 采集
 (if: $period is &quot;上午&quot;)[
 阳光透过树叶洒下斑驳光影。你小心翼翼地辨认着可食用的野果与菌类，并留意着可能有用的药草。
@@ -1813,34 +1818,23 @@ $food：食物数量（烹饪产物）--&gt;</tw-passagedata><tw-passagedata pid
   (if: _successRate &lt; 10)[(set: _successRate to 10)]
   (if: _successRate &gt; 100)[(set: _successRate to 100)]
 
-&lt;!-- 步骤3：判定打猎成功/失败 --&gt;
-(set: _huntRand to (random: 1, 100))
-(if: _huntRand &lt;= _successRate)[  &lt;!-- 打猎成功 --&gt;
-  (if: $martialLevel is 1)[(set: _meatCount to 3)]
-  (elseif: $martialLevel is 2)[(set: _meatCount to 6)]
-  (elseif: $martialLevel is 3)[(set: _meatCount to 12)]
-  (elseif: $martialLevel is 4)[(set: _meatCount to 24)]
-  (elseif: $martialLevel is 5)[(set: _meatCount to 48)]
-  (elseif: $martialLevel is 6)[(set: _meatCount to 96)]
-  (else:)[(set: _meatCount to 120 + _huntRand)]
+  &lt;!-- 步骤3：判定打猎结果（使用已创建的_huntRand） --&gt;
+  (set: _huntRand to (random: 1, 100))
+  
+  (if: _huntRand &lt;= _successRate)[  &lt;!-- 打猎成功（同一代码块内使用临时变量） --&gt;
+    &lt;!-- 步骤4：计算生肉数量（给已创建的_meatCount赋值，再使用） --&gt;
+    (if: $martialLevel is 1)[(set: _meatCount to 3)]
+    (elseif: $martialLevel is 2)[(set: _meatCount to 6)]
+    (elseif: $martialLevel is 3)[(set: _meatCount to 12)]
+    (elseif: $martialLevel is 4)[(set: _meatCount to 24)]
+    (elseif: $martialLevel is 5)[(set: _meatCount to 48)]
+    (elseif: $martialLevel is 6)[(set: _meatCount to 96)]
+    (else:)[(set: _meatCount to 100 + _huntRand)]
 
-  &lt;!-- 计算皮毛数量：生肉 / 3 --&gt;
-  (set: _furCount to (_meatCount / 3))
-
-  &lt;!-- 随机掉落：竹鼠皮 / 野兔皮 --&gt;
-  (set: _furType to (random: 1, 2))
-  (if: _furType is 1)[
-    (set: $bambooRatFur to $bambooRatFur + _furCount)  &lt;!-- 竹鼠皮 --&gt;
-    (set: _furName to &quot;竹鼠皮&quot;)
-  ]
-  (else)[
-    (set: $hareFur to $hareFur + _furCount)   &lt;!-- 野兔皮 --&gt;
-    (set: _furName to &quot;野兔皮&quot;)
-  ]
-
-  打猎成功！凭借 $martialLevel 级武功捕获猎物，获得 _meatCount 份生肉 &amp; _furCount 张_furName！
-  (set: $rawMeat to $rawMeat + _meatCount)
-]
+    &lt;!-- 步骤5：使用_meatCount显示结果（此时变量已创建并赋值，无报错） --&gt;
+    打猎成功！凭借 $martialLevel 级武功捕获猎物，获得 _meatCount 份生肉！
+    (set: $rawMeat to $rawMeat + _meatCount)
+    
   
 &lt;!-- 弱肉强食事件（武功等级&gt;5，打猎成功后30%概率触发） --&gt;
 (if: $martialLevel &gt; 5)[
@@ -1876,7 +1870,7 @@ $food：食物数量（烹饪产物）--&gt;</tw-passagedata><tw-passagedata pid
       (set: $health to $health - 2)
       (if: $health &lt; 0)[(set: $health to 0)]
     ](elseif: _riskRand &lt;= 5)[
-      被毒蛇袭击，中了毒！（每日健康-2，持续3天）
+      被带毒的猎物（如毒蛇、毒蜘蛛）袭击，中了毒！（每日健康-2，持续3天）
       (set: $poisonType to &quot;hunt&quot;)
       (set: $poisonDays to 3)
     ](else:)[
